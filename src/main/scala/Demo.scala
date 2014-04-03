@@ -8,11 +8,9 @@ import ExecutionContext.Implicits.global
  */
 object Demo extends App{
   import Clock.{Start,Stop}
-  var system = ActorSystem("demo")
+  val system = ActorSystem("demo")
   // Create the 'clock' actor
   val clock = system.actorOf(Props[Clock], "clock")
-
-
 
   val ain = wire("ain", true)
   val bin = wire("bin", false)

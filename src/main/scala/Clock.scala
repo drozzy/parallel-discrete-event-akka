@@ -63,18 +63,17 @@ class Clock extends Actor {
     if (agenda.isEmpty && currentTime > 0) {
       println("** Agenda empty. Clock exiting at time " + currentTime + ".")
       self ! Stop
-      return
     }
+    else{
+      currentTime += 1
+      println("Advancing to time " + currentTime)
+      processCurrentEvents
+      for (sim <- allSimulants) {
+        sim ! Ping(currentTime)
+      }
 
-    currentTime += 1
-    println("Advancing to time " + currentTime)
-    processCurrentEvents
-    for (sim <- allSimulants) {
-      sim ! Ping(currentTime)
-
+      busySimulants = Set.empty ++ allSimulants
     }
-
-    busySimulants = Set.empty ++ allSimulants
   }
 
   private def processCurrentEvents = {

@@ -1,4 +1,4 @@
-name := """akka-store-manager"""
+name := """parallel-discrete-event-akka"""
 
 version := "1.0"
 

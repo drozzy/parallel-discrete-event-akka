@@ -1,12 +1,12 @@
 *#
-*.iml
 *.ipr
 *.iws
 *.pyc
 *.tm.epoch
 *.vim
 *-shim.sbt
-.idea/
+.idea/workspace.xml
+.idea/tasks.xml
 /project/plugins/project
 project/boot
 target/

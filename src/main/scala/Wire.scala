@@ -11,7 +11,9 @@ class Wire(clock:ActorRef, name:String, init: Boolean) extends Actor{
   def this(clock:ActorRef, name:String) {this(clock, name, false)}
   def this(clock:ActorRef){this(clock, "unnamed")}
 
-  clock ! Add(self)
+  override def preStart(){
+    clock ! Add(self)
+  }
 
   private var sigVal = init
   private var observers: List[ActorRef] = List()

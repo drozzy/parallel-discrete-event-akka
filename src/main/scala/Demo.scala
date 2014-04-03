@@ -1,13 +1,17 @@
 import akka.actor.{ActorSystem, Props, ActorRef}
 import java.util.concurrent.TimeUnit
+import akka.pattern.ask
 import scala.concurrent.duration.Duration
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Await, ExecutionContext}
 import ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+import akka.util.Timeout
 /**
  * Created by Andriy on 02-Apr-14.
  */
 object Demo extends App{
   import Clock.{Start,Stop}
+  implicit val timeout = Timeout(5.seconds)
   val system = ActorSystem("demo")
   // Create the 'clock' actor
   val clock = system.actorOf(Props[Clock], "clock")
@@ -27,13 +31,16 @@ object Demo extends App{
 
   fullAdder(ain, bin, cin, sout, cout)
 
+  println("Await start")
+  Await.result( clock ? Clock.Start, 1.seconds)
+  println("Await end")
 
 
-  system.scheduler.scheduleOnce(Duration.create(50,TimeUnit.MILLISECONDS),
+  /*system.scheduler.scheduleOnce(Duration.create(50,TimeUnit.MILLISECONDS),
   clock, Clock.Start)
   system.scheduler.scheduleOnce(Duration.create(1450,TimeUnit.MILLISECONDS),
     clock, Clock.Tick)
-
+*/
   def fullAdder(ain: ActorRef, bin: ActorRef, cin: ActorRef, sout: ActorRef, cout: ActorRef) ={
     system.actorOf(Props(new FullAdder(clock, ain, bin, cin, sout, cout)))
   }

@@ -23,12 +23,14 @@ class Clock extends Actor {
     allSimulants = sim :: allSimulants
   }
 
+  // Tick a clock one time step - internal object
+  case object Tick
+
   override def receive = {
     case Add(target) => add(target)
-    case Clock.Tick =>
-      if(running && busySimulants.isEmpty) advance
-      // Try to advance to the next step
-      self ! Clock.Tick
+    case Tick =>
+      if(running && busySimulants.isEmpty) { advance }
+
 
     case AfterDelay(delay, msg, target) => {
       val item = WorkItem(currentTime + delay, msg, target)
@@ -40,10 +42,17 @@ class Clock extends Actor {
       assert(busySimulants contains sim)
 
       busySimulants -= sim
-
+      // As soon as all simulations are done
+      // We can advance to the next step
+      if (busySimulants.isEmpty) self ! Tick
     }
 
-    case Start => running = true
+    case Start => {
+      running = true
+      sender ! Pong(currentTime, self)
+
+     self ! Tick
+    }
 
     case Stop => {
 
@@ -91,8 +100,7 @@ class Clock extends Actor {
 }
 
 object Clock {
-  // Tick a clock one time step
-  case object Tick
+
   case class Ping (time:Int)
   case class Pong (time:Int, from:ActorRef)
   case object Stop

@@ -4,9 +4,11 @@ import Clock.{Ping,Pong}
  * Created by Andriy on 01-Apr-14.
  */
 abstract class Gate(clock:ActorRef, in1:ActorRef, in2:ActorRef, out:ActorRef) extends Actor{
-  clock ! Add(self)
-  in1 ! Add(self)
-  in2 ! Add(self)
+  override def preStart(){
+    clock ! Add(self)
+    in1 ! Add(self)
+    in2 ! Add(self)
+  }
 
   // Propagation delay
   val delay: Int
